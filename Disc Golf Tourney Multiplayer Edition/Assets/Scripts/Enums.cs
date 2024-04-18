@@ -8,3 +8,8 @@ public enum DiscState
     Flying,
     Immobile
 }
+
+public enum LevelNames
+{
+    Forest
+}

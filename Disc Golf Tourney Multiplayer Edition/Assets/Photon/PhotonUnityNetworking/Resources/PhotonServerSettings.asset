@@ -36,6 +36,11 @@ MonoBehaviour:
   RpcList:
   - ClickRpc
   - DestroyRpc
+  - ChangeScene
+  - UpdateLobbyUI
+  - ImInGame
+  - Initialize
+  - WinGame
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 0
