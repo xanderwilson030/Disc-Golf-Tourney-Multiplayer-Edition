@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using Cinemachine;
 
 public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -28,7 +30,17 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public float throwSpeed;
     public float throwSpeedIncrease;
     public float maxThrowSpeed;
+    public float discPositionResetSpeedLimit;
+
+    [Header("UI References")]
     public Slider throwSpeedSlider;
+    public TMP_Text parText;
+    public TMP_Text scoreText;
+    public CinemachineVirtualCamera virtualCamera;
+
+    [Header("Disc Placement Setup")]
+    public float groundOffset;
+    public float discResetDelay;
 
     [Header("Debug Values")]
     public bool debugThrowSpeedMode;
@@ -50,20 +62,52 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         photonPlayer = player;
         id = player.ActorNumber;
         GameManager.instance.players[id - 1] = this;
-    }
 
-    private void Start()
-    {
         if (photonView.IsMine)
         {
             rb = GetComponent<Rigidbody>();
             Cursor.lockState = CursorLockMode.Locked;
             currentState = DiscState.Aiming;
 
+            // Locating UI Elements
+            throwSpeedSlider = GameObject.FindGameObjectWithTag("ThrowSlider").GetComponent<Slider>();
+            parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
+            scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
+
+            // Finding the camera
+            virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
+            virtualCamera.Follow = gameObject.transform;
+            virtualCamera.LookAt = gameObject.transform;
+
             // Intializing the slider
             throwSpeedSlider.maxValue = maxThrowSpeed;
             throwSpeedSlider.value = throwSpeed;
         }
+    }
+
+    private void Start()
+    {
+        //// Comment out when testing in singleplayer
+        //if (photonView.IsMine)
+        //{
+        //    rb = GetComponent<Rigidbody>();
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //    currentState = DiscState.Aiming;
+
+        //    // Locating UI Elements
+        //    throwSpeedSlider = GameObject.FindGameObjectWithTag("ThrowSlider").GetComponent<Slider>();
+        //    parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
+        //    scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
+
+        //    // Finding the camera
+        //    virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
+        //    virtualCamera.Follow = gameObject.transform;
+        //    virtualCamera.LookAt = gameObject.transform;
+
+        //    // Intializing the slider
+        //    throwSpeedSlider.maxValue = maxThrowSpeed;
+        //    throwSpeedSlider.value = throwSpeed;
+        //}
     }
 
     void Update()
@@ -79,6 +123,17 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             //Debug.Log(rb.velocity);
+
+            // If the the disc is slow enough, it will be reset to fly again
+            if (currentState == DiscState.Flying && rb.velocity.magnitude < discPositionResetSpeedLimit)
+            {
+                OutputDebugMessage("Disc can be thrown again", "orange", false);
+                ResetDiscForFlight();
+            }
+            else if (currentState == DiscState.Flying)  
+            {
+                OutputDebugMessage($"Disc Velocity is: {rb.velocity} and magnitude is {rb.velocity.magnitude}", "green", false);
+            }
 
             if (rb.velocity.magnitude > 0)
             {
@@ -103,11 +158,6 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 rb.AddForce(liftForce);
                 rb.AddForce(dragForce);
                 //rb.drag = dragForceMagnitude;
-            }
-            else if (currentState == DiscState.Flying)
-            {
-                currentState = DiscState.Aiming;
-                OutputDebugMessage("Disc can be thrown again", "orange", false);
             }
         }
     }
@@ -150,6 +200,22 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     /*
+     *  The following method resets the disc and allows it to fly again
+     */
+    private void ResetDiscForFlight()
+    {
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;
+        Vector3 position = gameObject.transform.position;
+        gameObject.transform.position = new Vector3(position.x, position.y + groundOffset, position.z);
+        gameObject.transform.eulerAngles = Vector3.zero;
+        currentState = DiscState.Aiming;
+        throwSpeedSlider.value = 0;
+        throwSpeed = 0;
+        OutputDebugMessage("Disc is ready for flight again", "green", false);
+    }
+
+    /*
      * The following method is used to determine if debugging is currently activated and then
      * outputs the given message
      */
@@ -171,6 +237,14 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        throw new System.NotImplementedException();
+        // we want to sync the 'curHatTime' between all clients
+        if (stream.IsWriting)
+        {
+            //stream.SendNext(curHatTime);
+        }
+        else if (stream.IsReading)
+        {
+            //curHatTime = (float)stream.ReceiveNext();
+        }
     }
 }

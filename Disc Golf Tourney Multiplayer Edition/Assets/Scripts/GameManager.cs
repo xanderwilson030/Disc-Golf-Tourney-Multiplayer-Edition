@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         players = new PrototypeController[PhotonNetwork.PlayerList.Length];
         photonView.RPC("ImInGame", RpcTarget.AllBuffered);
+        Debug.Log(PhotonNetwork.PlayerList.Length);
     }
     // when a player loads into the game scene - tell everyone
     [PunRPC]
