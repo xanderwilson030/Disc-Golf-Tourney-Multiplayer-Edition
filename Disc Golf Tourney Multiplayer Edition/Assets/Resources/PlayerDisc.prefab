@@ -63,7 +63,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
 --- !u!114 &6616607711703414101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
   discRadius: 0.1
   throwSpeed: 0
   throwSpeedIncrease: 10
-  maxThrowSpeed: 100
+  maxThrowSpeed: 35
   discPositionResetSpeedLimit: 0.3
   throwSpeedSlider: {fileID: 0}
   parText: {fileID: 0}
@@ -166,6 +166,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4611755473258409402}
     m_Modifications:
+    - target: {fileID: -8948226332686151553, guid: f244d0f1efc345a4aa8a3dd29775777e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 3.46
+      objectReference: {fileID: 0}
+    - target: {fileID: -8948226332686151553, guid: f244d0f1efc345a4aa8a3dd29775777e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 9.191
+      objectReference: {fileID: 0}
+    - target: {fileID: -8948226332686151553, guid: f244d0f1efc345a4aa8a3dd29775777e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -41.186
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f244d0f1efc345a4aa8a3dd29775777e,
         type: 3}
       propertyPath: m_LocalScale.x

@@ -139,7 +139,6 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             {
                 // Calculate relative velocity
                 Vector3 relativeVelocity = -rb.velocity;
-                relativeVelocity.y = 0;
 
                 // Calculate lift force
                 //float liftForceMagnitude = 0.5f * airDensity * (relativeVelocity.z * relativeVelocity.z) * liftArea * liftCoefficient;
@@ -193,6 +192,11 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             // Turn off kinematic so the disc can move, and then set the velocity (NOT ADD FORCE)
             rb.isKinematic = false;
             rb.velocity = initialVelocity;
+            float forceValue = .18f * throwSpeed;
+            //Vector3 initialVelocity = throwDirection * forceValue;
+           //rb.AddForce(initialVelocity, ForceMode.Impulse);
+
+            //rb.AddForce(initialVelocity, ForceMode.Impulse);
 
             // Change the state so we can no longer interact with the disc while it is flying
             currentState = DiscState.Flying;

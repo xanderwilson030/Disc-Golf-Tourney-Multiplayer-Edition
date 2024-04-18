@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -558,8 +558,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 283338591}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1.4551915e-10, z: -4.7293724e-11, w: 1}
-  m_LocalPosition: {x: -9.3132235e-10, y: 2.0554596e-13, z: 6.16638e-13}
+  m_LocalRotation: {x: 1.7763568e-15, y: 1.7462298e-10, z: -5.4569682e-11, w: 1}
+  m_LocalPosition: {x: -9.3132235e-10, y: 2.054487e-13, z: 6.163461e-13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1538,8 +1538,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 984022907}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00005589754, y: 0.9870874, z: -0.16018221, w: 0.00034445617}
-  m_LocalPosition: {x: -0.00209367, y: 3, z: -31}
+  m_LocalRotation: {x: 0.000055871, y: 0.9870874, z: -0.16018221, w: 0.00034429255}
+  m_LocalPosition: {x: -0.0020928825, y: 3, z: -31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1584,12 +1584,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!114 &984022912
 MonoBehaviour:
   m_ObjectHideFlags: 0
