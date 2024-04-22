@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Audio;
 
 /*
  *  This script controls the settings menu accessible from the main menu
@@ -16,9 +17,15 @@ public class SettingsMenu : MonoBehaviour
     Resolution[] resolutions;
     public TMP_Dropdown resolutionDropdown;
 
+    [Header("Audio Settings")]
+    public AudioMixer masterMixer;
+    public Slider audioSlider;
+
+
     private void Start()
     {
         FindResolutionsAndSetDropDown();
+        AdjustAudioSlider();
     }
 
     /*
@@ -85,5 +92,32 @@ public class SettingsMenu : MonoBehaviour
         {
             Application.targetFrameRate = -1;
         }
+    }
+
+    /*
+     *  This method is for the audio slider
+     */
+    public void AdjustAudioSlider()
+    {
+        float volume = audioSlider.value;
+        masterMixer.SetFloat("MasterVol", Mathf.Log10(volume) * 20);
+    }
+
+    /*
+     *  The following methods relate to quality levels
+     */
+    public void SetLowQuality()
+    {
+        QualitySettings.SetQualityLevel(0, true); // Fastest
+    }
+
+    public void SetMediumQuality()
+    {
+        QualitySettings.SetQualityLevel(3, true); // Good Graphics
+    }
+
+    public void SetHighQuality()
+    {
+        QualitySettings.SetQualityLevel(5, true); // Fantastic
     }
 }
