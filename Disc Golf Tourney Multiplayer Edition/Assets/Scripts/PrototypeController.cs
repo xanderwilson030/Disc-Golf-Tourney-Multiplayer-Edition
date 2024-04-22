@@ -46,6 +46,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public bool debugThrowSpeedMode;
     public float debugThrowSpeed;
     public bool showDebugMessages;
+    public bool doSingleplayer;
 
     /*
      * Lift Coefficients
@@ -87,27 +88,30 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Start()
     {
-        //// Comment out when testing in singleplayer
-        //if (photonView.IsMine)
-        //{
-        //    rb = GetComponent<Rigidbody>();
-        //    Cursor.lockState = CursorLockMode.Locked;
-        //    currentState = DiscState.Aiming;
+        // Comment out when testing in singleplayer
+        if (doSingleplayer)
+        {
+            if (photonView.IsMine)
+            {
+                rb = GetComponent<Rigidbody>();
+                Cursor.lockState = CursorLockMode.Locked;
+                currentState = DiscState.Aiming;
 
-        //    // Locating UI Elements
-        //    throwSpeedSlider = GameObject.FindGameObjectWithTag("ThrowSlider").GetComponent<Slider>();
-        //    parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
-        //    scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
+                // Locating UI Elements
+                throwSpeedSlider = GameObject.FindGameObjectWithTag("ThrowSlider").GetComponent<Slider>();
+                parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
+                scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
 
-        //    // Finding the camera
-        //    virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
-        //    virtualCamera.Follow = gameObject.transform;
-        //    virtualCamera.LookAt = gameObject.transform;
+                // Finding the camera
+                virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
+                virtualCamera.Follow = gameObject.transform;
+                virtualCamera.LookAt = gameObject.transform;
 
-        //    // Intializing the slider
-        //    throwSpeedSlider.maxValue = maxThrowSpeed;
-        //    throwSpeedSlider.value = throwSpeed;
-        //}
+                // Intializing the slider
+                throwSpeedSlider.maxValue = maxThrowSpeed;
+                throwSpeedSlider.value = throwSpeed;
+            }
+        }
     }
 
     void Update()

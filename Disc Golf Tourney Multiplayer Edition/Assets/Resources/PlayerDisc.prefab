@@ -96,6 +96,7 @@ MonoBehaviour:
   debugThrowSpeedMode: 0
   debugThrowSpeed: 0
   showDebugMessages: 1
+  doSingleplayer: 0
 --- !u!64 &3233801187344425858
 MeshCollider:
   m_ObjectHideFlags: 0
