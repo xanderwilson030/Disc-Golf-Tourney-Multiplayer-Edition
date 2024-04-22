@@ -11,5 +11,6 @@ public enum DiscState
 
 public enum LevelNames
 {
-    Forest
+    Forest,
+    Prototype
 }

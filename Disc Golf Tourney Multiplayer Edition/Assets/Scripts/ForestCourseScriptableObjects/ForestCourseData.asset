@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cb366ae711c61e45a8ac26fafbf8816, type: 3}
+  m_Name: ForestCourseData
+  m_EditorClassIdentifier: 
+  courseName: 0
+  numHoles: 6
+  parTotal: 30
+  holes:
+  - {fileID: 11400000, guid: 83619c10b929b4c49bda716d54894ac9, type: 2}
+  - {fileID: 11400000, guid: a88f745f8174afd4aa2de3a44a399d8a, type: 2}
+  - {fileID: 11400000, guid: 145c66f24424b4843bbd71cf4fcc9fcd, type: 2}
+  - {fileID: 11400000, guid: 7b3172e950139e243b8a1af7b2998444, type: 2}
+  - {fileID: 11400000, guid: fb3d581ea4bd9f343bca3fe7b9aab735, type: 2}
+  - {fileID: 11400000, guid: c30af95953f4b1345a713e8f862b677a, type: 2}

@@ -16,63 +16,80 @@ public class GameManager : MonoBehaviourPunCallbacks
     public PrototypeController[] players;      // array of all players
     [HideInInspector]
     private int playersInGame;              // number of players currently in the Game scene
-    // instance
-    public static GameManager instance;
+    
+    public static GameManager instance; // Singleton instance
+
     void Awake()
     {
-        // set the instance to this script
+        // Creating the singleton
         instance = this;
     }
+
     void Start()
     {
         players = new PrototypeController[PhotonNetwork.PlayerList.Length];
         photonView.RPC("ImInGame", RpcTarget.AllBuffered);
         Debug.Log(PhotonNetwork.PlayerList.Length);
     }
-    // when a player loads into the game scene - tell everyone
+    
+    /*
+     *  This method runs when a player joins the game, and when all players are in the if statement
+     *  below runs and calls StartCourse() in courseController
+     */
     [PunRPC]
     void ImInGame()
     {
         playersInGame++;
-        // when all the players are in the scene - spawn the players
+        
+        // When every player is in the scene... start the course
         if (playersInGame == PhotonNetwork.PlayerList.Length)
-            SpawnPlayer();
+        {
+            CourseController.instance.StartCourse();
+            // SpawnPlayer();
+        }
     }
 
-    // spawns a player and initializes it
-    void SpawnPlayer()
-    {
-        // instantiate the player across the network
-        GameObject playerObj = PhotonNetwork.Instantiate(playerPrefabLocation, spawnPoints[Random.Range(0, spawnPoints.Length)].position, Quaternion.identity, 0);
-        // get the player script
-        PrototypeController playerScript = playerObj.GetComponent<PrototypeController>();
-        // initialize the player
-        playerScript.photonView.RPC("Initialize", RpcTarget.All, PhotonNetwork.LocalPlayer);
-    }
-
-    // returns the player who has the requested id
+    /*
+     *  This method returns the player script with the given player id
+     */
     public PrototypeController GetPlayer(int playerId)
     {
         return players.First(x => x.id == playerId);
     }
-    // returns the player of the requested GameObject
+
+    /*
+     *  This method returns the player gameobject with the given player id
+     */
+    public GameObject GetPlayerGameObject(int playerId)
+    {
+        return players.First(x => x.id == playerId).gameObject;
+    }
+
+    /*
+     *  This method returns the player script associated with the given gameobject
+     */
     public PrototypeController GetPlayer(GameObject playerObject)
     {
         return players.First(x => x.gameObject == playerObject);
     }
-    // called when a player's held the hat for the winning amount of time
+
+    /*
+     *  This method displays the end game UI and then returns the game to the menu
+     */
     [PunRPC]
     void WinGame(int playerId)
     {
         gameEnded = true;
         PrototypeController player = GetPlayer(playerId);
-        //GameUI.instance.SetWinText(player.photonPlayer.NickName);
         Invoke("GoBackToMenu", 3.0f);
     }
-    // called after the game has been won - navigates back to the Menu scene
+
+    /*
+     *  This method returns the game to the main menu scene and removes all players from the lobby
+     */
     void GoBackToMenu()
     {
         PhotonNetwork.LeaveRoom();
-        NetworkManager.instance.ChangeScene("Menu");
+        NetworkManager.instance.ChangeScene("MainMenu");
     }
 }

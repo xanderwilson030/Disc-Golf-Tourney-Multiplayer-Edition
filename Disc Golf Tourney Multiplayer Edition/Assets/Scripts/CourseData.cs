@@ -8,6 +8,7 @@ public class CourseData : ScriptableObject
     [Header("Course Details")]
     public LevelNames courseName;
     public int numHoles;
-    public GameObject[] hole;
+    public int parTotal;
+    public HoleData[] holes;
 }
 
