@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-5913602288930264136
+--- !u!114 &-1204871899626339211
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -21,8 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Skydome_Day
-  m_Shader: {fileID: -6465566751694194690, guid: df186589414ca14418bc8038a4916f76,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: df186589414ca14418bc8038a4916f76, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []

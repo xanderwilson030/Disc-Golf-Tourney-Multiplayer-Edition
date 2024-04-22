@@ -10,18 +10,28 @@ public class Menu : MonoBehaviourPunCallbacks
     [Header("Screens")]
     public GameObject mainScreen;
     public GameObject lobbyScreen;
+    public GameObject courseSelectionScreen;
+    public GameObject multiplayerScreen;
+    public GameObject settingsScreen;
+
     [Header("Main Screen")]
     public Button createRoomButton;
     public Button joinRoomButton;
+
     [Header("Lobby Screen")]
     public TextMeshProUGUI playerListText;      // text displaying all the players currently in the lobby
     public Button startGameButton;              // button the host can press to start the game
+
+    [Header("Course Selection Buttons")]
+    public Button[] courseSelectionButtons;
+
     void Start()
     {
         // disable the buttons at the start as we're not connected to the server yet
         createRoomButton.interactable = false;
         joinRoomButton.interactable = false;
     }
+
     // called when we connect to the master server
     // enable the "Create Room" and "Join Room" buttons
     public override void OnConnectedToMaster()
@@ -29,12 +39,16 @@ public class Menu : MonoBehaviourPunCallbacks
         createRoomButton.interactable = true;
         joinRoomButton.interactable = true;
     }
+
     // sets the currently visible screen
-    void SetScreen(GameObject screen)
+    private void SetScreen(GameObject screen)
     {
         // deactivate all screens
         mainScreen.SetActive(false);
         lobbyScreen.SetActive(false);
+        courseSelectionScreen.SetActive(false);
+        multiplayerScreen.SetActive(false);
+        settingsScreen.SetActive(false);
         // enable the requested screen
         screen.SetActive(true);
     }
@@ -44,16 +58,19 @@ public class Menu : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.NickName = playerNameInput.text;
     }
+
     // called when the "Create Room" button is pressed
     public void OnCreateRoomButton(TMP_InputField roomNameInput)
     {
         NetworkManager.instance.CreateRoom(roomNameInput.text);
     }
+
     // called when the "Join Room" button is pressed
     public void OnJoinRoomButton(TMP_InputField roomNameInput)
     {
         NetworkManager.instance.JoinRoom(roomNameInput.text);
     }
+
     // called when we join a room
     public override void OnJoinedRoom()
     {
@@ -61,6 +78,7 @@ public class Menu : MonoBehaviourPunCallbacks
         // since there's now a new player in the lobby, tell everyone to update the lobby UI
         photonView.RPC("UpdateLobbyUI", RpcTarget.All);
     }
+
     // called when a player leaves the room
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
@@ -69,6 +87,7 @@ public class Menu : MonoBehaviourPunCallbacks
         // OnPlayerLeftRoom gets called for all clients in the room, so we don't need to RPC it
         UpdateLobbyUI();
     }
+
     // update the lobby UI to show player list and host buttons
     [PunRPC]
     public void UpdateLobbyUI()
@@ -85,17 +104,59 @@ public class Menu : MonoBehaviourPunCallbacks
         else
             startGameButton.interactable = false;
     }
+
     // called when the "Leave Lobby" button is pressed
     public void OnLeaveLobbyButton()
     {
         PhotonNetwork.LeaveRoom();
         SetScreen(mainScreen);
     }
+
     // called when the "Start Game" button is pressed
     // only the host can click this button
     public void OnStartGameButton()
     {
         // tell all players in the room to load the Game scene
         NetworkManager.instance.photonView.RPC("ChangeScene", RpcTarget.All, "DiscGolfTestingGround");
+    }
+
+    /*
+     *  Called when going to the multiplayer menu
+     */
+    public void OnMultiplayerButtonClick()
+    {
+        SetScreen(multiplayerScreen);
+    }
+
+    /*
+     *  Returns to main menu
+     */
+    public void OnReturnToMainMenu()
+    {
+        SetScreen(mainScreen);
+    }
+
+    /*
+     *  Opens settings screen
+     */
+    public void OnOpenSettingsScreen()
+    {
+        SetScreen(settingsScreen);
+    }
+
+    /*
+     *  Opens course selection
+     */
+    public void OnOpenCourseSelection()
+    {
+
+    }
+
+    /*
+     *  Called when quitting the game
+     */
+    public void OnQuitButtonClick()
+    {
+        Application.Quit();
     }
 }
