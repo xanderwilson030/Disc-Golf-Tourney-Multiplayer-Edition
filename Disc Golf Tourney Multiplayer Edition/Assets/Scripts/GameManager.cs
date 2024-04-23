@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (playersInGame == PhotonNetwork.PlayerList.Length)
         {
             CourseController.instance.StartCourse();
+            ScoreboardController.instance.UpdatePlayerScoreboardNames();
             // SpawnPlayer();
         }
     }

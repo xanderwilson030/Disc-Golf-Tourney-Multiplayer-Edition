@@ -63,6 +63,8 @@ public class CourseController : MonoBehaviourPunCallbacks
         {
             OutputDebugMessage("The current course has either no holes or is missing its references", "red", true);
         }
+
+        ScoreboardController.instance.SetParScoresForCourse(holes);
     }
 
     /*
