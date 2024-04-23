@@ -117,7 +117,7 @@ public class Menu : MonoBehaviourPunCallbacks
     public void OnStartGameButton()
     {
         // tell all players in the room to load the Game scene
-        NetworkManager.instance.photonView.RPC("ChangeScene", RpcTarget.All, "DiscGolfTestingGround");
+        NetworkManager.instance.photonView.RPC("ChangeScene", RpcTarget.All, "ForestCourse");
     }
 
     /*

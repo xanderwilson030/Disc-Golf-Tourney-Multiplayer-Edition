@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b2d4c5836364840bcc03c3f845b637, type: 3}
   m_Name: Forest6
   m_EditorClassIdentifier: 
-  startingPosition: {x: 605, y: 50, z: 522}
+  startingPosition: {x: 605, y: 52, z: 522}
   holeName: Cliffside Danger
   associatedLevel: 0
   parScore: 6

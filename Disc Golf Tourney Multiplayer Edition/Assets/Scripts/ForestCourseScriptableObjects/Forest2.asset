@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b2d4c5836364840bcc03c3f845b637, type: 3}
   m_Name: Forest2
   m_EditorClassIdentifier: 
-  startingPosition: {x: 116, y: 20, z: 169}
+  startingPosition: {x: 116, y: 22, z: 169}
   holeName: Lake Shores
   associatedLevel: 0
-  parScore: 6
+  parScore: 5
