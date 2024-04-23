@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ForestCourseData
   m_EditorClassIdentifier: 
   courseName: 0
-  numHoles: 6
-  parTotal: 30
+  numHoles: 5
+  parTotal: 33
   holes:
   - {fileID: 11400000, guid: 83619c10b929b4c49bda716d54894ac9, type: 2}
   - {fileID: 11400000, guid: a88f745f8174afd4aa2de3a44a399d8a, type: 2}
