@@ -100,6 +100,14 @@ public class CourseController : MonoBehaviourPunCallbacks
     }
 
     /*
+     *  Returns par for current hole
+     */
+    public int GetCurrentPar()
+    {
+        return holes[currentHole].parScore;
+    }
+
+    /*
      *  This method is called when a player finishes a hole
      *  
      *  If every player finishes a hole the players move onto the next one
@@ -139,6 +147,8 @@ public class CourseController : MonoBehaviourPunCallbacks
         foreach (PrototypeController player in GameManager.instance.players)
         {
             player.gameObject.transform.position = GetCurrentHole().startingPosition;
+            player.ResetDiscForNextHole();
+            
         }
 
     }

@@ -24,7 +24,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public float discRadius = 0.1f;
     private Rigidbody rb;
 
-    private DiscState currentState;
+    public DiscState currentState;
 
     [Header("Disc Throw Speed Values")]
     public float throwSpeed;
@@ -41,6 +41,10 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     [Header("Disc Placement Setup")]
     public float groundOffset;
     public float discResetDelay;
+
+    [Header("Player Stats")]
+    public int totalScore = 0;
+    public int scoreForCurrentHole = 0;
 
     [Header("Debug Values")]
     public bool debugThrowSpeedMode;
@@ -83,6 +87,13 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             // Intializing the slider
             throwSpeedSlider.maxValue = maxThrowSpeed;
             throwSpeedSlider.value = throwSpeed;
+
+            // Initalizing Score UI
+            scoreText.text = scoreForCurrentHole.ToString();
+            parText.text = CourseController.instance.GetCurrentPar().ToString();
+
+            // Debug
+            OutputDebugMessage($"Current Position When Spawning in is {gameObject.transform.position}", "green", false);
         }
     }
 
@@ -110,6 +121,10 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 // Intializing the slider
                 throwSpeedSlider.maxValue = maxThrowSpeed;
                 throwSpeedSlider.value = throwSpeed;
+
+                // Initalizing Score UI
+                scoreText.text = scoreForCurrentHole.ToString();
+                parText.text = CourseController.instance.GetCurrentPar().ToString();
             }
         }
     }
@@ -124,7 +139,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
     private void FixedUpdate()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && currentState != DiscState.Immobile)
         {
             //Debug.Log(rb.velocity);
 
@@ -136,7 +151,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             }
             else if (currentState == DiscState.Flying)  
             {
-                OutputDebugMessage($"Disc Velocity is: {rb.velocity} and magnitude is {rb.velocity.magnitude}", "green", false);
+                //OutputDebugMessage($"Disc Velocity is: {rb.velocity} and magnitude is {rb.velocity.magnitude}", "green", false);
             }
 
             if (rb.velocity.magnitude > 0)
@@ -171,7 +186,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     private void IntakeThrowSpeed()
     {
         // The debug mode for throw speed allows you to input a set value and skip the flexible power intake option
-        if (Input.GetMouseButton(0) && currentState == DiscState.Aiming && !debugThrowSpeedMode)
+        if (Input.GetMouseButton(0) && currentState == DiscState.Aiming && !debugThrowSpeedMode && currentState != DiscState.Immobile)
         {
             // Increasing the throw speed based on how long the user holds down the mouse
             throwSpeed += throwSpeedIncrease * Time.deltaTime;
@@ -185,10 +200,10 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             // Setting the value on the slider
             throwSpeedSlider.value = throwSpeed;
 
-            OutputDebugMessage($"Throwspeed is: {throwSpeed}", "blue", false);
+            //OutputDebugMessage($"Throwspeed is: {throwSpeed}", "blue", false);
         }
         // When the user stops holding down the mouse button we apply the force to the disc
-        else if (Input.GetMouseButtonUp(0) && currentState == DiscState.Aiming)
+        else if (Input.GetMouseButtonUp(0) && currentState == DiscState.Aiming && currentState != DiscState.Immobile)
         {
             Vector3 throwDirection = Camera.main.transform.forward;
             Vector3 initialVelocity = throwDirection * throwSpeed;
@@ -204,13 +219,17 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
             // Change the state so we can no longer interact with the disc while it is flying
             currentState = DiscState.Flying;
+
+            // Increment the score
+            scoreForCurrentHole++;
+            scoreText.text = scoreForCurrentHole.ToString();
         }
     }
 
     /*
      *  The following method resets the disc and allows it to fly again
      */
-    private void ResetDiscForFlight()
+    public void ResetDiscForFlight()
     {
         rb.velocity = Vector3.zero;
         rb.isKinematic = true;
@@ -221,6 +240,43 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         throwSpeedSlider.value = 0;
         throwSpeed = 0;
         OutputDebugMessage("Disc is ready for flight again", "green", false);
+    }
+
+    /*
+     *  The following method is called when the disc enters a basket
+     */
+    public void DiscInHole(GameObject hole)
+    {
+        //if (photonView.IsMine)
+        //{
+        //    virtualCamera.Follow = hole.transform;
+        //    virtualCamera.LookAt = hole.transform;
+        //}
+
+        ResetDiscForFlight();
+    }
+
+    /*
+     *  The following method resets the disc for the next hole
+     */
+    public void ResetDiscForNextHole()
+    {
+        //virtualCamera.Follow = gameObject.transform;
+        //virtualCamera.LookAt = gameObject.transform;
+
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;
+        gameObject.transform.eulerAngles = Vector3.zero;
+        currentState = DiscState.Aiming;
+        throwSpeedSlider.value = 0;
+        throwSpeed = 0;
+
+        totalScore += scoreForCurrentHole;
+        scoreForCurrentHole = 0;
+
+        parText.text = CourseController.instance.GetCurrentPar().ToString();
+
+        OutputDebugMessage("ResetDiscForNextHole Called", "green", false);
     }
 
     /*
@@ -240,7 +296,6 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 Debug.Log($"<color={color}>{message}</color>");
             }
         }
-        
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

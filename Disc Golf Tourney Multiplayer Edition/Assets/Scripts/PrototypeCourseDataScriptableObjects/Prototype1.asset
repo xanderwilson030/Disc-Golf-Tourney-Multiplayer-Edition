@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1b2d4c5836364840bcc03c3f845b637, type: 3}
   m_Name: Prototype1
   m_EditorClassIdentifier: 
-  startingPosition: {x: 20, y: 2, z: 0}
+  startingPosition: {x: 32, y: 2, z: -41}
   holeName: 1
   associatedLevel: 1
   parScore: 3

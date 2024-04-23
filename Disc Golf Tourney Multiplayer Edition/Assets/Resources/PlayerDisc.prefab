@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3353463540448713005}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: -34}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -83,6 +83,7 @@ MonoBehaviour:
   liftArea: 0.1
   airDensity: 1.2
   discRadius: 0.1
+  currentState: 0
   throwSpeed: 0
   throwSpeedIncrease: 10
   maxThrowSpeed: 35
@@ -93,6 +94,8 @@ MonoBehaviour:
   virtualCamera: {fileID: 0}
   groundOffset: 2
   discResetDelay: 3
+  totalScore: 0
+  scoreForCurrentHole: 0
   debugThrowSpeedMode: 0
   debugThrowSpeed: 0
   showDebugMessages: 1
