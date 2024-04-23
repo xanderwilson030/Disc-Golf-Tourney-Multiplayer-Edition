@@ -116,7 +116,7 @@ Material:
     m_Ints: []
     m_Floats:
     - Vector1_5E6E1535: 0.2
-    - Vector1_989A1C37: 0.5
+    - Vector1_989A1C37: 1
     - Vector1_B2FA92CE: 1
     - _AlphaClip: 0
     - _Blend: 0
@@ -142,7 +142,7 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _edgeFoamAmount: 23.35
+    - _edgeFoamAmount: 40
     - _edgeFoamCutoff: 32.4
     - _edgeFoamScale: 179.8
     - _fakeSpecular: 0.3
@@ -151,8 +151,8 @@ Material:
     - _refractionScale: 87.3
     - _refractionSpeed: 0.7
     - _refractionStrength: 0.0047
-    - _waterDepth: 9.91
-    - _waterSmoothness: 0
+    - _waterDepth: 20
+    - _waterSmoothness: 30
     m_Colors:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
