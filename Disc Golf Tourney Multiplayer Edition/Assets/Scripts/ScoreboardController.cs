@@ -152,19 +152,19 @@ public class ScoreboardController : MonoBehaviourPunCallbacks
         {
             if (i == 0)
             {
-                playerOneScores[currentHole - 1].text = p1Final.ToString();
+                playerOneScores[currentHole].text = p1Final.ToString();
             }
             else if (i == 1)
             {
-                playerTwoScores[currentHole - 1].text = p2Final.ToString();
+                playerTwoScores[currentHole].text = p2Final.ToString();
             }
             else if (i == 2)
             {
-                playerThreeScores[currentHole - 1].text = p3Final.ToString();
+                playerThreeScores[currentHole].text = p3Final.ToString();
             }
             else if (i == 3)
             {
-                playerFourScores[currentHole - 1].text = p4Final.ToString();
+                playerFourScores[currentHole].text = p4Final.ToString();
             }
         }
     }

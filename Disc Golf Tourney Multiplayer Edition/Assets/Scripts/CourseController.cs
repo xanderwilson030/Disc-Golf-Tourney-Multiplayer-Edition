@@ -124,10 +124,7 @@ public class CourseController : MonoBehaviourPunCallbacks
         // When every player has finished the current hole... move to the next one
         if (numPlayersFinishedAtHole == PhotonNetwork.PlayerList.Length)
         {
-            if (photonView.IsMine)
-            {
-                GoToNextHole();
-            }
+            GoToNextHole();
         }
     }
 
