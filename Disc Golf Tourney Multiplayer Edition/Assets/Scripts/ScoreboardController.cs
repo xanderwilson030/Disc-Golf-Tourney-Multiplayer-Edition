@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using Photon.Pun.UtilityScripts;
 
 public class ScoreboardController : MonoBehaviourPunCallbacks
 {
@@ -24,6 +25,8 @@ public class ScoreboardController : MonoBehaviourPunCallbacks
 
     [Header("Score Stats")]
     public int currentHole;
+    public int p1Final = 0, p2Final = 0, p3Final = 0, p4Final = 0;
+    public bool gameOver = false;
 
     [Header("Debug Values")]
     public bool showDebugMessages;
@@ -36,14 +39,17 @@ public class ScoreboardController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        // Reveal the scoreboard while holding TAB
-        if (Input.GetKey(KeyCode.Tab))
+        if (!gameOver)
         {
-            scoreBoard.SetActive(true);
-        }
-        else
-        {
-            scoreBoard.SetActive(false);
+            // Reveal the scoreboard while holding TAB
+            if (Input.GetKey(KeyCode.Tab))
+            {
+                scoreBoard.SetActive(true);
+            }
+            else
+            {
+                scoreBoard.SetActive(false);
+            }
         }
     }
 
@@ -64,17 +70,17 @@ public class ScoreboardController : MonoBehaviourPunCallbacks
             else if (i == 1)
             {
                 playerTwoRow.SetActive(true);
-                playerNames[0].text = PhotonNetwork.PlayerList[i].NickName;
+                playerNames[1].text = PhotonNetwork.PlayerList[i].NickName;
             }
             else if (i == 2)
             {
                 playerThreeRow.SetActive(true);
-                playerNames[0].text = PhotonNetwork.PlayerList[i].NickName;
+                playerNames[2].text = PhotonNetwork.PlayerList[i].NickName;
             }
             else if (i == 3)
             {
                 playerFourRow.SetActive(true);
-                playerNames[0].text = PhotonNetwork.PlayerList[i].NickName;
+                playerNames[3].text = PhotonNetwork.PlayerList[i].NickName;
             }
         }
 
@@ -99,6 +105,68 @@ public class ScoreboardController : MonoBehaviourPunCallbacks
         parScores[parScores.Length - 1].text = parTotal.ToString();
 
         OutputDebugMessage("Initialized Par Scores", "orange", false);
+    }
+
+    /*
+     *  The following method updates the scoreboard
+     */
+    public void UpdateScoreboardWithHoleScores()
+    {
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            if (i == 0)
+            {
+                playerOneScores[currentHole - 1].text = PhotonNetwork.PlayerList[0].GetScore().ToString();
+                p1Final += PhotonNetwork.PlayerList[0].GetScore();
+                PhotonNetwork.PlayerList[0].SetScore(0);
+            }
+            else if (i == 1)
+            {
+                playerTwoScores[currentHole - 1].text = PhotonNetwork.PlayerList[1].GetScore().ToString();
+                p2Final += PhotonNetwork.PlayerList[1].GetScore();
+                PhotonNetwork.PlayerList[1].SetScore(0);
+            }
+            else if (i == 2)
+            {
+                playerThreeScores[currentHole - 1].text = PhotonNetwork.PlayerList[2].GetScore().ToString();
+                p3Final += PhotonNetwork.PlayerList[2].GetScore();
+                PhotonNetwork.PlayerList[2].SetScore(0);
+            }
+            else if (i == 3)
+            {
+                playerFourScores[currentHole - 1].text = PhotonNetwork.PlayerList[3].GetScore().ToString();
+                p4Final += PhotonNetwork.PlayerList[3].GetScore();
+                PhotonNetwork.PlayerList[3].SetScore(0);
+            }
+        }
+
+        currentHole++;
+    }
+
+    /*
+     *  This method updates the final scores
+     */
+    public void SetFinalScores()
+    {
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        {
+            if (i == 0)
+            {
+                playerOneScores[currentHole - 1].text = p1Final.ToString();
+            }
+            else if (i == 1)
+            {
+                playerTwoScores[currentHole - 1].text = p2Final.ToString();
+            }
+            else if (i == 2)
+            {
+                playerThreeScores[currentHole - 1].text = p3Final.ToString();
+            }
+            else if (i == 3)
+            {
+                playerFourScores[currentHole - 1].text = p4Final.ToString();
+            }
+        }
     }
 
     /*

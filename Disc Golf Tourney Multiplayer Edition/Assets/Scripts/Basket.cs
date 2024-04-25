@@ -26,8 +26,6 @@ public class Basket : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter(Collider other)
     {
-        
-
         if (other.gameObject.tag == "Player")
         {
             discEnterEffect.Play();
@@ -36,11 +34,9 @@ public class Basket : MonoBehaviourPunCallbacks
             if (other.gameObject.GetComponent<PhotonView>().IsMine)
             {
                 //other.gameObject.GetComponent<PrototypeController>().DiscInHole(gameObject);
-                other.gameObject.GetComponent<PrototypeController>().currentState = DiscState.Immobile;
+                other.gameObject.GetComponent<PrototypeController>().DiscInHole(gameObject);
                 OutputDebugMessage("Disc entered hole", "green", false);
             }
-
-            courseController.photonView.RPC("FinishedHole", RpcTarget.All);
         }
     }
 

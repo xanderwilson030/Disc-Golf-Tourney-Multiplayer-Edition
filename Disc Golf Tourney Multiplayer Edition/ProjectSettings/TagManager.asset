@@ -9,6 +9,7 @@ TagManager:
   - ScoreText
   - VirtualCamPlayer
   - CourseController
+  - Terrain
   layers:
   - Default
   - TransparentFX

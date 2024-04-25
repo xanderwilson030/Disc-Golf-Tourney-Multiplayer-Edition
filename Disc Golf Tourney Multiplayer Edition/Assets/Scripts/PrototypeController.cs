@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Cinemachine;
+using Photon.Pun.UtilityScripts;
 
 public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -51,6 +52,8 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public float debugThrowSpeed;
     public bool showDebugMessages;
     public bool doSingleplayer;
+    public bool debugMode;
+    public CourseController courseController;
 
     /*
      * Lift Coefficients
@@ -78,6 +81,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             throwSpeedSlider = GameObject.FindGameObjectWithTag("ThrowSlider").GetComponent<Slider>();
             parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
             scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
+            courseController = GameObject.FindGameObjectWithTag("CourseController").gameObject.GetComponent<CourseController>();
 
             // Finding the camera
             virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
@@ -134,6 +138,17 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             IntakeThrowSpeed();
+        }
+
+        if (photonView.IsMine)
+        {
+            if (debugMode)
+            {
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    ResetDiscForFlight();
+                }
+            }
         }
     }
 
@@ -222,6 +237,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
             // Increment the score
             scoreForCurrentHole++;
+            photonPlayer.SetScore(scoreForCurrentHole);
             scoreText.text = scoreForCurrentHole.ToString();
         }
     }
@@ -249,34 +265,50 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     {
         //if (photonView.IsMine)
         //{
-        //    virtualCamera.Follow = hole.transform;
-        //    virtualCamera.LookAt = hole.transform;
+
         //}
 
-        ResetDiscForFlight();
+        currentState = DiscState.Immobile;
+        virtualCamera.Follow = hole.transform;
+        virtualCamera.LookAt = hole.transform;
+
+        //ResetDiscForFlight();
+
+        Invoke("SendCourseControllerHoleCompleted", 2f);
     }
+
+    public void SendCourseControllerHoleCompleted()
+    {
+        courseController.photonView.RPC("FinishedHole", RpcTarget.All);
+    }
+
+
 
     /*
      *  The following method resets the disc for the next hole
      */
     public void ResetDiscForNextHole()
     {
-        //virtualCamera.Follow = gameObject.transform;
-        //virtualCamera.LookAt = gameObject.transform;
+        if (photonView.IsMine)
+        {
+            virtualCamera.Follow = this.gameObject.transform;
+            virtualCamera.LookAt = this.gameObject.transform;
 
-        rb.velocity = Vector3.zero;
-        rb.isKinematic = true;
-        gameObject.transform.eulerAngles = Vector3.zero;
-        currentState = DiscState.Aiming;
-        throwSpeedSlider.value = 0;
-        throwSpeed = 0;
+            rb.velocity = Vector3.zero;
+            rb.isKinematic = true;
+            gameObject.transform.eulerAngles = Vector3.zero;
+            currentState = DiscState.Aiming;
+            throwSpeedSlider.value = 0;
+            throwSpeed = 0;
 
-        totalScore += scoreForCurrentHole;
-        scoreForCurrentHole = 0;
+            totalScore += scoreForCurrentHole;
+            scoreForCurrentHole = 0;
+            scoreText.text = "0";
 
-        parText.text = CourseController.instance.GetCurrentPar().ToString();
+            parText.text = CourseController.instance.GetCurrentPar().ToString();
 
-        OutputDebugMessage("ResetDiscForNextHole Called", "green", false);
+            OutputDebugMessage("ResetDiscForNextHole Called", "green", false);
+        }
     }
 
     /*

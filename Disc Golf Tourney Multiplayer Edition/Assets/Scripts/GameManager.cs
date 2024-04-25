@@ -73,24 +73,4 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         return players.First(x => x.gameObject == playerObject);
     }
-
-    /*
-     *  This method displays the end game UI and then returns the game to the menu
-     */
-    [PunRPC]
-    void WinGame(int playerId)
-    {
-        gameEnded = true;
-        PrototypeController player = GetPlayer(playerId);
-        Invoke("GoBackToMenu", 3.0f);
-    }
-
-    /*
-     *  This method returns the game to the main menu scene and removes all players from the lobby
-     */
-    void GoBackToMenu()
-    {
-        PhotonNetwork.LeaveRoom();
-        NetworkManager.instance.ChangeScene("MainMenu");
-    }
 }

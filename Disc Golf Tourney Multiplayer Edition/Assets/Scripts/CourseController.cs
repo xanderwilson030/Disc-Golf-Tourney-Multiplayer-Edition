@@ -51,7 +51,6 @@ public class CourseController : MonoBehaviourPunCallbacks
         OutputDebugMessage("Loading the current course scriptable object...", "green", false);
 
         currentLevelName = currentCourse.courseName;
-        numHoles = currentCourse.numHoles;
         //holes = new HoleData[numHoles];
         
         //for (int i = 0; i < numHoles; i++)
@@ -120,11 +119,15 @@ public class CourseController : MonoBehaviourPunCallbacks
     void FinishedHole()
     {
         numPlayersFinishedAtHole++;
+        OutputDebugMessage("Player Finished Hole", "orange", false);
 
         // When every player has finished the current hole... move to the next one
         if (numPlayersFinishedAtHole == PhotonNetwork.PlayerList.Length)
         {
-            GoToNextHole();
+            if (photonView.IsMine)
+            {
+                GoToNextHole();
+            }
         }
     }
 
@@ -135,14 +138,18 @@ public class CourseController : MonoBehaviourPunCallbacks
     {
         currentHole++;
 
-        if (currentHole > numHoles)
+        if (currentHole >= numHoles)
         {
             // TODO --- Polish
             Debug.Log("Course Over");
-            photonView.RPC("WinGame", RpcTarget.All, GameManager.instance);
+            photonView.RPC("WinGame", RpcTarget.AllBuffered);
+            return;
         }
 
         numPlayersFinishedAtHole = 0;
+
+        // Updating the scoreboard
+        ScoreboardController.instance.UpdateScoreboardWithHoleScores();
 
         // Now we need to move all the players to the new starting position for the next whole
         
@@ -153,6 +160,27 @@ public class CourseController : MonoBehaviourPunCallbacks
             
         }
 
+    }
+
+    /*
+     *  This method displays the end game UI and then returns the game to the menu
+     */
+    [PunRPC]
+    void WinGame()
+    {
+        ScoreboardController.instance.gameOver = true;
+        ScoreboardController.instance.SetFinalScores();
+        ScoreboardController.instance.scoreBoard.SetActive(true);
+        Invoke("GoBackToMenu", 10.0f);
+    }
+
+    /*
+     *  This method returns the game to the main menu scene and removes all players from the lobby
+     */
+    void GoBackToMenu()
+    {
+        PhotonNetwork.LeaveRoom();
+        NetworkManager.instance.ChangeScene("MainMenu");
     }
 
     /*
