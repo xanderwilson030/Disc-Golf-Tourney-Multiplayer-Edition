@@ -76,13 +76,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bdaf4395e0c44f468543accb28f698a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 50
   id: 0
   liftCoefficient: 0.3
   dragCoefficient: 0.25
   liftArea: 0.1
   airDensity: 1.2
   discRadius: 0.1
+  rotationSpeed: 50
   currentState: 0
   throwSpeed: 0
   throwSpeedIncrease: 10

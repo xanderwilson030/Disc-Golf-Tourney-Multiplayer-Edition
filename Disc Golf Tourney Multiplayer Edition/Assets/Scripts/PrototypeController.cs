@@ -9,9 +9,7 @@ using Cinemachine;
 using Photon.Pun.UtilityScripts;
 
 public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
-{
-    public float rotationSpeed = 50f;
-    
+{   
 
     [HideInInspector]
     public int id;
@@ -24,6 +22,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public float airDensity = 1.2f;
     public float discRadius = 0.1f;
     private Rigidbody rb;
+    public float rotationSpeed = 100f;
 
     public DiscState currentState;
 
@@ -120,6 +119,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 throwSpeedSlider = GameObject.FindGameObjectWithTag("ThrowSlider").GetComponent<Slider>();
                 parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
                 scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
+                courseController = GameObject.FindGameObjectWithTag("CourseController").gameObject.GetComponent<CourseController>();
 
                 // Finding the camera
                 virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
@@ -142,6 +142,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             IntakeThrowSpeed();
+            RotateDisc();
         }
 
         if (photonView.IsMine)
@@ -196,6 +197,25 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 rb.AddForce(dragForce);
                 //rb.drag = dragForceMagnitude;
             }
+        }
+    }
+
+    /*
+     *  This method handles disc rotation
+     */
+    private void RotateDisc()
+    {
+        if (currentState == DiscState.Aiming && currentState != DiscState.Immobile)
+        {
+            // This line might break everything
+            //transform.forward = new Vector3(virtualCamera.transform.forward.x, 0, virtualCamera.transform.forward.z);
+
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
+
+            Vector3 rotation = new Vector3(-verticalInput, 0f, -horizontalInput) * rotationSpeed * Time.deltaTime;
+
+            transform.Rotate(rotation);
         }
     }
 
