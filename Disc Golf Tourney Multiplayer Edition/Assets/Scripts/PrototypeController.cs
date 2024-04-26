@@ -46,6 +46,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     [Header("Player Stats")]
     public int totalScore = 0;
     public int scoreForCurrentHole = 0;
+    public Vector3 previousPosition;
 
     [Header("Debug Values")]
     public bool debugThrowSpeedMode;
@@ -95,6 +96,9 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             // Initalizing Score UI
             scoreText.text = scoreForCurrentHole.ToString();
             parText.text = CourseController.instance.GetCurrentPar().ToString();
+
+            // Setting previous position
+            previousPosition = gameObject.transform.position;
 
             // Debug
             OutputDebugMessage($"Current Position When Spawning in is {gameObject.transform.position}", "green", false);
@@ -252,6 +256,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         Vector3 position = gameObject.transform.position;
         gameObject.transform.position = new Vector3(position.x, position.y + groundOffset, position.z);
         gameObject.transform.eulerAngles = Vector3.zero;
+        previousPosition = gameObject.transform.position;
         currentState = DiscState.Aiming;
         throwSpeedSlider.value = 0;
         throwSpeed = 0;
@@ -282,7 +287,23 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         courseController.photonView.RPC("FinishedHole", RpcTarget.All);
     }
 
-
+    /*
+     *  The following method resets the disc from being out of bounds
+     */
+    public void DiscWentOutOfBounds()
+    {
+        if (photonView.IsMine)
+        {
+            rb.velocity = Vector3.zero;
+            rb.isKinematic = true;
+            gameObject.transform.position = previousPosition;
+            gameObject.transform.eulerAngles = Vector3.zero;
+            currentState = DiscState.Aiming;
+            throwSpeedSlider.value = 0;
+            throwSpeed = 0;
+            OutputDebugMessage("Disc is ready for flight again after going out of bounds", "green", false);
+        }
+    }
 
     /*
      *  The following method resets the disc for the next hole
@@ -304,6 +325,8 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             totalScore += scoreForCurrentHole;
             scoreForCurrentHole = 0;
             scoreText.text = "0";
+
+            previousPosition = gameObject.transform.position;
 
             parText.text = CourseController.instance.GetCurrentPar().ToString();
 

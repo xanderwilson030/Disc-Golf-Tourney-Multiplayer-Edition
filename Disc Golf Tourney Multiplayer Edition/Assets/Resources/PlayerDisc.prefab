@@ -96,6 +96,7 @@ MonoBehaviour:
   discResetDelay: 3
   totalScore: 0
   scoreForCurrentHole: 0
+  previousPosition: {x: 0, y: 0, z: 0}
   debugThrowSpeedMode: 0
   debugThrowSpeed: 0
   showDebugMessages: 1
