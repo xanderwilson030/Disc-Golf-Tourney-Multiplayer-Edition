@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     [Header("Players")]
     public string playerPrefabLocation;     // player prefab path in the Resources folder
     public Transform[] spawnPoints;         // array of player spawn points
-    [HideInInspector]
     public PrototypeController[] players;      // array of all players
     [HideInInspector]
     private int playersInGame;              // number of players currently in the Game scene
