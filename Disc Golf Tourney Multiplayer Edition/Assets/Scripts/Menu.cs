@@ -25,6 +25,11 @@ public class Menu : MonoBehaviourPunCallbacks
     [Header("Course Selection Buttons")]
     public Button[] courseSelectionButtons;
 
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     void Start()
     {
         // disable the buttons at the start as we're not connected to the server yet

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using Cinemachine;
 using Photon.Pun.UtilityScripts;
+using System.Linq;
 
 public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 {   
@@ -25,6 +26,9 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public float rotationSpeed = 100f;
 
     public DiscState currentState;
+    public bool movementPaused = false;
+    public bool canSpectate = false;
+    [SerializeField] int spectateIndex = 0;
 
     [Header("Disc Throw Speed Values")]
     public float throwSpeed;
@@ -37,6 +41,8 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public TMP_Text parText;
     public TMP_Text scoreText;
     public CinemachineVirtualCamera virtualCamera;
+    public GameObject pauseMenu;
+    public TMP_Text spectateText;
 
     [Header("Disc Placement Setup")]
     public float groundOffset;
@@ -82,6 +88,8 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
             scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
             courseController = GameObject.FindGameObjectWithTag("CourseController").gameObject.GetComponent<CourseController>();
+            pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu").gameObject.transform.GetChild(0).gameObject;
+            spectateText = GameObject.FindGameObjectWithTag("SpectateText").GetComponent<TMP_Text>();
 
             // Finding the camera
             virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
@@ -120,6 +128,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 parText = GameObject.FindGameObjectWithTag("ParText").GetComponent<TMP_Text>();
                 scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
                 courseController = GameObject.FindGameObjectWithTag("CourseController").gameObject.GetComponent<CourseController>();
+                pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu").gameObject.transform.GetChild(0).gameObject;
 
                 // Finding the camera
                 virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
@@ -153,6 +162,19 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     ResetDiscForFlight();
                 }
+            }
+        }
+
+        if (photonView.IsMine)
+        {
+            PauseHandler();
+        }
+
+        if (photonView.IsMine)
+        {
+            if (canSpectate)
+            {
+                SpectateOtherPlayers();
             }
         }
     }
@@ -224,6 +246,12 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
      */
     private void IntakeThrowSpeed()
     {
+        // Pause menu check to not allow input
+        if (movementPaused)
+        {
+            return;
+        }
+
         // The debug mode for throw speed allows you to input a set value and skip the flexible power intake option
         if (Input.GetMouseButton(0) && currentState == DiscState.Aiming && !debugThrowSpeedMode && currentState != DiscState.Immobile)
         {
@@ -296,10 +324,63 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         currentState = DiscState.Immobile;
         virtualCamera.Follow = hole.transform;
         virtualCamera.LookAt = hole.transform;
+        canSpectate = true;
+        spectateText.text = "Spectating\nBasket";
+
+        // Trigger Hole Rating Event
+        GameEvents.instance.e_TriggerHoleRatingText.Invoke(scoreForCurrentHole);
 
         //ResetDiscForFlight();
 
         Invoke("SendCourseControllerHoleCompleted", 2f);
+    }
+
+    /*
+     *  This method handles spectating after they have made it into a hole
+     */
+    public void SpectateOtherPlayers()
+    {
+        List<GameObject> playerList = FindSpectateablePlayer();
+
+        if (playerList.Count > 0)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                spectateIndex++;
+
+                if (spectateIndex >= playerList.Count)
+                {
+                    spectateIndex = 0;
+                }
+
+                virtualCamera.Follow = playerList.ElementAt(spectateIndex).transform;
+                virtualCamera.LookAt = playerList.ElementAt(spectateIndex).transform;
+                spectateText.text = $"Spectating\n{playerList.ElementAt(spectateIndex).GetComponent<PrototypeController>().photonPlayer.NickName}";
+            }
+        }
+        else
+        {
+            virtualCamera.Follow = this.gameObject.transform;
+            virtualCamera.LookAt= this.gameObject.transform;
+        }
+    }
+
+    /*
+     *  This method finds available players to spectate
+     */
+    public List<GameObject> FindSpectateablePlayer()
+    {
+        List<GameObject> spectatablePlayers = new List<GameObject>();
+
+        for (int i = 0; i < GameManager.instance.players.Length; i++)
+        {
+            if (GameManager.instance.players[i].currentState != DiscState.Immobile)
+            {
+                spectatablePlayers.Add(GameManager.instance.players[i].gameObject);
+            }
+        }
+
+        return spectatablePlayers;
     }
 
     public void SendCourseControllerHoleCompleted()
@@ -332,6 +413,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine)
         {
+            canSpectate = false;
             virtualCamera.Follow = this.gameObject.transform;
             virtualCamera.LookAt = this.gameObject.transform;
 
@@ -345,12 +427,35 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             totalScore += scoreForCurrentHole;
             scoreForCurrentHole = 0;
             scoreText.text = "0";
+            spectateText.text = "";
 
             previousPosition = gameObject.transform.position;
 
             parText.text = CourseController.instance.GetCurrentPar().ToString();
 
             OutputDebugMessage("ResetDiscForNextHole Called", "green", false);
+        }
+    }
+
+    /*
+     *  The following method handles the pause menu
+     */
+    private void PauseHandler()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (pauseMenu.activeSelf)
+            {
+                pauseMenu.SetActive(false);
+                Cursor.lockState = CursorLockMode.Locked;
+                movementPaused = false;
+            }
+            else if (!pauseMenu.activeSelf)
+            {
+                pauseMenu.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                movementPaused = true;
+            }
         }
     }
 

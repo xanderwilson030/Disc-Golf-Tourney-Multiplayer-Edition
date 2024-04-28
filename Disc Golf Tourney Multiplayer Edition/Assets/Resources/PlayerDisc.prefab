@@ -84,6 +84,7 @@ MonoBehaviour:
   discRadius: 0.1
   rotationSpeed: 50
   currentState: 0
+  movementPaused: 0
   throwSpeed: 0
   throwSpeedIncrease: 10
   maxThrowSpeed: 35
@@ -92,6 +93,7 @@ MonoBehaviour:
   parText: {fileID: 0}
   scoreText: {fileID: 0}
   virtualCamera: {fileID: 0}
+  pauseMenu: {fileID: 0}
   groundOffset: 2
   discResetDelay: 3
   totalScore: 0

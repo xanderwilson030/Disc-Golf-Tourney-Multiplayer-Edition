@@ -6,7 +6,8 @@ public enum DiscState
 {
     Aiming,
     Flying,
-    Immobile
+    Immobile,
+    Paused
 }
 
 public enum LevelNames

@@ -15,4 +15,4 @@ MonoBehaviour:
   startingPosition: {x: 70, y: 32, z: 720}
   holeName: Sandy Gully
   associatedLevel: 0
-  parScore: 8
+  parScore: 5
