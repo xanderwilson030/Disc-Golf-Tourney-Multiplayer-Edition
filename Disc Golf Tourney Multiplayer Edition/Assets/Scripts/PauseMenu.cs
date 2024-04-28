@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Realtime;
 
 /*
  *  This class controls the pause menu that can be accessed when playing the game
@@ -52,6 +53,11 @@ public class PauseMenu : MonoBehaviour
     public void LeaveGame()
     {
         Debug.Log("<color=purple>Player leaving game</color>");
+
+        Player curPlayer = GameManager.instance.GetPlayer(PhotonNetwork.LocalPlayer.ActorNumber).photonPlayer;
+
+        //ScoreboardController.instance.UpdateScoreboardOnPlayerDisconnect(curPlayer);
+
         PhotonNetwork.Disconnect();
         SceneManager.LoadScene(0);
     }

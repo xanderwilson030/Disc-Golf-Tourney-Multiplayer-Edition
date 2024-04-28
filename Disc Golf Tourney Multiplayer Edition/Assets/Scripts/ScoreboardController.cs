@@ -5,6 +5,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using Photon.Pun.UtilityScripts;
+using UnityEngine.AI;
+using System;
 
 public class ScoreboardController : MonoBehaviourPunCallbacks
 {
@@ -141,6 +143,60 @@ public class ScoreboardController : MonoBehaviourPunCallbacks
         }
 
         currentHole++;
+    }
+
+    /*
+     *  This method updates the scoreboard when a player leaves
+     */
+    public void UpdateScoreboardOnPlayerDisconnect(Player player)
+    {
+        if (player == PhotonNetwork.PlayerList[0])
+        {
+            playerNames[0].text = PhotonNetwork.PlayerList[0].NickName;
+            // Source array, destination array, length
+            Array.Copy(playerTwoScores, playerOneScores, playerTwoScores.Length);
+
+            playerNames[1].text = PhotonNetwork.PlayerList[1].NickName;
+            Array.Copy(playerThreeScores, playerTwoScores, playerThreeScores.Length);
+
+            playerNames[2].text = PhotonNetwork.PlayerList[2].NickName;
+            Array.Copy(playerFourScores, playerThreeScores, playerFourScores.Length);
+
+        }
+        else if (player == PhotonNetwork.PlayerList[1])
+        {
+            playerNames[1].text = PhotonNetwork.PlayerList[1].NickName;
+            Array.Copy(playerThreeScores, playerTwoScores, playerThreeScores.Length);
+
+            playerNames[2].text = PhotonNetwork.PlayerList[2].NickName;
+            Array.Copy(playerFourScores, playerThreeScores, playerFourScores.Length);
+
+        }
+        else if (player == PhotonNetwork.PlayerList[2])
+        {
+            playerNames[2].text = PhotonNetwork.PlayerList[2].NickName;
+            Array.Copy(playerFourScores, playerThreeScores, playerFourScores.Length);
+        }
+        else if (player == PhotonNetwork.PlayerList[3])
+        {
+
+        }
+
+        if (PhotonNetwork.PlayerList.Length == 3)
+        {
+            playerFourRow.SetActive(false);
+        }
+        else if (PhotonNetwork.PlayerList.Length == 2)
+        {
+            playerThreeRow.SetActive(false);
+            playerFourRow.SetActive(false);
+        }
+        else if (PhotonNetwork.PlayerList.Length == 1)
+        {
+            playerTwoRow.SetActive(false);
+            playerThreeRow.SetActive(false);
+            playerFourRow.SetActive(false);
+        }
     }
 
     /*
