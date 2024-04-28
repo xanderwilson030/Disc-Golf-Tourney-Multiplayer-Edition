@@ -124,19 +124,38 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
             // Setting Nickname on Canvas
             nicknameText.text = photonPlayer.NickName;
+            photonView.RPC("SyncNicknameText", RpcTarget.OthersBuffered, photonPlayer.NickName);
 
             // Setting random Disc Color
-            SetRandomDiscColor();
+            //SetRandomDiscColor();
+
+            // Generate random values for red, green, and blue components
+            float randomRed = Random.value;
+            float randomGreen = Random.value;
+            float randomBlue = Random.value;
+
+            // Create a new color using the random values
+            Color randomColor = new Color(randomRed, randomGreen, randomBlue);
+
+            discRenderer.material.color = randomColor;
+            photonView.RPC("SetRandomDiscColor", RpcTarget.OthersBuffered);
 
             // Debug
             OutputDebugMessage($"Current Position When Spawning in is {gameObject.transform.position}", "green", false);
         }
     }
 
+    [PunRPC]
+    void SyncNicknameText(string nickname)
+    {
+        nicknameText.text = nickname;
+    }
+
     /*
      *  Sets random disc color on start
      */
-    private void SetRandomDiscColor()
+    [PunRPC]
+    void SetRandomDiscColor()
     {
         // Generate random values for red, green, and blue components
         float randomRed = Random.value;
@@ -211,11 +230,6 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     nicknameText.gameObject.SetActive(true);
                 }
-            }
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                SetRandomDiscColor();
             }
         }
 

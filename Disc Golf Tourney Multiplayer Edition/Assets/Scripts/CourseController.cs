@@ -101,6 +101,14 @@ public class CourseController : MonoBehaviourPunCallbacks
     }
 
     /*
+     *  This method returns the current hole's spawn pos
+     */
+    public Vector3 GetCurrentHoleStartingPosition()
+    {
+        return holes[currentHole].startingPosition;
+    }
+
+    /*
      *  Returns par for current hole
      */
     public int GetCurrentPar()

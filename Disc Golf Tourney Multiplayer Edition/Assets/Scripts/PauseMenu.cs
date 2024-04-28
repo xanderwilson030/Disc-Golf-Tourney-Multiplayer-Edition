@@ -22,6 +22,14 @@ public class PauseMenu : MonoBehaviour
     public void ResetToHoleStart()
     {
         Debug.Log("<color=purple>Resetting player to hole start</color>");
+        PrototypeController curPlayer = GameManager.instance.GetPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
+        
+        if (curPlayer.currentState == DiscState.Aiming)
+        {
+            curPlayer.DiscWentOutOfBounds();
+            curPlayer.gameObject.transform.position = CourseController.instance.GetCurrentHoleStartingPosition();
+        }
+        
     }
 
     /*
@@ -30,6 +38,12 @@ public class PauseMenu : MonoBehaviour
     public void ForfeitHole()
     {
         Debug.Log("<color=purple>Player forfeiting hole</color>");
+        PrototypeController curPlayer = GameManager.instance.GetPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
+
+        if (curPlayer.currentState == DiscState.Aiming)
+        {
+            curPlayer.DiscWentOutOfBounds();
+        }
     }
 
     /*

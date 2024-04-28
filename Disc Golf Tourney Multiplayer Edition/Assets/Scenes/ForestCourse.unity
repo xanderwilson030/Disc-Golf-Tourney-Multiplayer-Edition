@@ -6823,8 +6823,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 984022907}
   serializedVersion: 2
-  m_LocalRotation: {x: 3.5097614e-10, y: 0.000034502358, z: -0.000010781987, w: 1}
-  m_LocalPosition: {x: -0.00018401256, y: 0.000000042563535, z: 0.00000012817371}
+  m_LocalRotation: {x: 3.5174352e-10, y: 0.000034577795, z: -0.000010805561, w: 1}
+  m_LocalPosition: {x: -0.0001844149, y: 0.000000042660226, z: 0.00000012846839}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -17171,6 +17171,31 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 593244667}
     m_Modifications:
+    - target: {fileID: 804239305074675020, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_text
+      value: Out of Bounds Reset
+      objectReference: {fileID: 0}
+    - target: {fileID: 817660749854428608, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2231867716300165040, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -10.92041
+      objectReference: {fileID: 0}
+    - target: {fileID: 2584739401674254176, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -94.5622
+      objectReference: {fileID: 0}
+    - target: {fileID: 2584739401674254176, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 47.281082
+      objectReference: {fileID: 0}
     - target: {fileID: 2714404559434402980, guid: 0ebe832bd43400b4e844511e6c3eeac4,
         type: 3}
       propertyPath: m_Pivot.x
@@ -17271,6 +17296,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3357598885694997419, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 544.9755
+      objectReference: {fileID: 0}
     - target: {fileID: 4393012759183238386, guid: 0ebe832bd43400b4e844511e6c3eeac4,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -17309,7 +17339,25 @@ PrefabInstance:
     - target: {fileID: 5507748686743603347, guid: 0ebe832bd43400b4e844511e6c3eeac4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -231.84975
+      value: -143.10985
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405089315165364264, guid: 0ebe832bd43400b4e844511e6c3eeac4,
+        type: 3}
+      propertyPath: m_text
+      value: '<b>CONTROLS</b>
+
+
+        Left Mouse: Charge Shot AND Change Spectate
+        Target
+
+        Right Mouse: Change Camera Distance
+
+        Tab: Scoreboard
+
+        H:
+        Hide Nickname
+
+        WASD: Rotate Disc'
       objectReference: {fileID: 0}
     - target: {fileID: 7514146391584577339, guid: 0ebe832bd43400b4e844511e6c3eeac4,
         type: 3}
@@ -17349,7 +17397,7 @@ PrefabInstance:
     - target: {fileID: 8654872527202018502, guid: 0ebe832bd43400b4e844511e6c3eeac4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -320.58966
+      value: -231.84975
       objectReference: {fileID: 0}
     - target: {fileID: 8750741685176614485, guid: 0ebe832bd43400b4e844511e6c3eeac4,
         type: 3}
