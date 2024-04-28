@@ -128,16 +128,6 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
             // Setting random Disc Color
             //SetRandomDiscColor();
-
-            // Generate random values for red, green, and blue components
-            float randomRed = Random.value;
-            float randomGreen = Random.value;
-            float randomBlue = Random.value;
-
-            // Create a new color using the random values
-            Color randomColor = new Color(randomRed, randomGreen, randomBlue);
-
-            discRenderer.material.color = randomColor;
             photonView.RPC("SetRandomDiscColor", RpcTarget.OthersBuffered);
 
             // Debug
