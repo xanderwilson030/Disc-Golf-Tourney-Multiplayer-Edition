@@ -25,10 +25,13 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     private Rigidbody rb;
     public float rotationSpeed = 100f;
 
+    [Header("Disc Details")]
     public DiscState currentState;
     public bool movementPaused = false;
     public bool canSpectate = false;
     [SerializeField] int spectateIndex = 0;
+    public int courseCeiling = 300;
+    [SerializeField] Renderer discRenderer;
 
     [Header("Disc Throw Speed Values")]
     public float throwSpeed;
@@ -43,6 +46,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public CinemachineVirtualCamera virtualCamera;
     public GameObject pauseMenu;
     public TMP_Text spectateText;
+    public TMP_Text nicknameText;
 
     [Header("Disc Placement Setup")]
     public float groundOffset;
@@ -52,6 +56,16 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
     public int totalScore = 0;
     public int scoreForCurrentHole = 0;
     public Vector3 previousPosition;
+
+    [Header("Cinemachine Values")]
+    public float zoomSpeed = 1.0f;
+    public float minRadius = 5.0f;
+    public float maxRadius = 20.0f;
+    private CinemachineOrbitalTransposer orbitalTransposer;
+    [SerializeField] float targetFollowOffsetZ;
+    public float lerpSpeed = 5f;
+    public int[] eligibleRadii;
+    [SerializeField] int radiiIndex = 0;
 
     [Header("Debug Values")]
     public bool debugThrowSpeedMode;
@@ -95,6 +109,7 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
             virtualCamera.Follow = gameObject.transform;
             virtualCamera.LookAt = gameObject.transform;
+            orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
 
             // Intializing the slider
             throwSpeedSlider.maxValue = maxThrowSpeed;
@@ -107,9 +122,32 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             // Setting previous position
             previousPosition = gameObject.transform.position;
 
+            // Setting Nickname on Canvas
+            nicknameText.text = photonPlayer.NickName;
+
+            // Setting random Disc Color
+            SetRandomDiscColor();
+
             // Debug
             OutputDebugMessage($"Current Position When Spawning in is {gameObject.transform.position}", "green", false);
         }
+    }
+
+    /*
+     *  Sets random disc color on start
+     */
+    private void SetRandomDiscColor()
+    {
+        // Generate random values for red, green, and blue components
+        float randomRed = Random.value;
+        float randomGreen = Random.value;
+        float randomBlue = Random.value;
+
+        // Create a new color using the random values
+        Color randomColor = new Color(randomRed, randomGreen, randomBlue);
+
+        // Apply the random color to a material, sprite renderer, UI element, etc.
+        discRenderer.material.color = randomColor;
     }
 
     private void Start()
@@ -129,11 +167,13 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<TMP_Text>();
                 courseController = GameObject.FindGameObjectWithTag("CourseController").gameObject.GetComponent<CourseController>();
                 pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu").gameObject.transform.GetChild(0).gameObject;
+                spectateText = GameObject.FindGameObjectWithTag("SpectateText").GetComponent<TMP_Text>();
 
                 // Finding the camera
                 virtualCamera = GameObject.FindGameObjectWithTag("VirtualCamPlayer").GetComponent<CinemachineVirtualCamera>();
                 virtualCamera.Follow = gameObject.transform;
                 virtualCamera.LookAt = gameObject.transform;
+                orbitalTransposer = virtualCamera.GetCinemachineComponent<CinemachineOrbitalTransposer>();
 
                 // Intializing the slider
                 throwSpeedSlider.maxValue = maxThrowSpeed;
@@ -142,6 +182,12 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
                 // Initalizing Score UI
                 scoreText.text = scoreForCurrentHole.ToString();
                 parText.text = CourseController.instance.GetCurrentPar().ToString();
+
+                // Setting previous position
+                previousPosition = gameObject.transform.position;
+
+                // Debug
+                OutputDebugMessage($"Current Position When Spawning in is {gameObject.transform.position}", "green", false);
             }
         }
     }
@@ -152,6 +198,25 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         {
             IntakeThrowSpeed();
             RotateDisc();
+            CameraZoomScroll();
+
+
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                if (nicknameText.gameObject.activeSelf)
+                {
+                    nicknameText.gameObject.SetActive(false);
+                }
+                else
+                {
+                    nicknameText.gameObject.SetActive(true);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SetRandomDiscColor();
+            }
         }
 
         if (photonView.IsMine)
@@ -184,6 +249,11 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine && currentState != DiscState.Immobile)
         {
             //Debug.Log(rb.velocity);
+            // If the disc glitches and moves too fast... we can reset it
+            if (gameObject.transform.position.y > courseCeiling)
+            {
+                DiscWentOutOfBounds();
+            }
 
             // If the the disc is slow enough, it will be reset to fly again
             if (currentState == DiscState.Flying && rb.velocity.magnitude < discPositionResetSpeedLimit)
@@ -239,6 +309,35 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
 
             transform.Rotate(rotation);
         }
+    }
+
+    /*
+     *  This method handles camera scroll
+     */
+    private void CameraZoomScroll()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            radiiIndex++;
+
+            if (radiiIndex >= eligibleRadii.Length)
+            {
+                radiiIndex = 0;
+            }
+
+            orbitalTransposer.m_FollowOffset.z = eligibleRadii[radiiIndex];
+        }
+
+        //float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+
+        //if (scrollInput != 0)
+        //{
+        //    // Calculate the target follow offset based on scroll input
+        //    targetFollowOffsetZ = Mathf.Clamp(targetFollowOffsetZ + zoomSpeed * scrollInput, minRadius, maxRadius);
+        //}
+
+        //// Smoothly lerp the current follow offset to the target follow offset
+        //orbitalTransposer.m_FollowOffset.z = Mathf.Lerp(orbitalTransposer.m_FollowOffset.z, targetFollowOffsetZ, lerpSpeed * Time.deltaTime);
     }
 
     /*
@@ -403,7 +502,33 @@ public class PrototypeController : MonoBehaviourPunCallbacks, IPunObservable
             throwSpeedSlider.value = 0;
             throwSpeed = 0;
             OutputDebugMessage("Disc is ready for flight again after going out of bounds", "green", false);
+            spectateText.text = "You went out of bounds, resetting to last known position";
+            StartCoroutine(ClearOutofBoundsText());
         }
+    }
+
+    /*
+     *  Clears out of bounds text
+     */
+    private IEnumerator ClearOutofBoundsText()
+    {
+        int counter = 2;
+
+        while (counter > 0)
+        {
+            yield return new WaitForSeconds(1);
+            counter--;
+        }
+
+        spectateText.text = "";
+    }
+
+    /*
+     * Resets the hole to the start of the hole
+     */
+    public void ResetToHoleStart()
+    {
+
     }
 
     /*
