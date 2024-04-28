@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     
     public static GameManager instance; // Singleton instance
 
+    [Header("Loading Screen")]
+    public GameObject loadingScreen;
+
     void Awake()
     {
         // Creating the singleton
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         // When every player is in the scene... start the course
         if (playersInGame == PhotonNetwork.PlayerList.Length)
         {
+            loadingScreen.SetActive(false);
             CourseController.instance.StartCourse();
             ScoreboardController.instance.UpdatePlayerScoreboardNames();
             // SpawnPlayer();
